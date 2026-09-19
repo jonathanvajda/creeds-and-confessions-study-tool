@@ -1,199 +1,39 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Creed & Catechism Memory App</title>
-  <link rel="stylesheet" href="styles/skeleton.css">
-  <link rel="stylesheet" href="styles/normalize.css">
-  <link rel="stylesheet" href="styles/app-base.css">
-  <link rel="stylesheet" href="styles/app.css">
-  <!-- Chart.js for analytics -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A private, local-first study companion for memorizing historic creeds and catechisms.">
+  <title>Confessio — Catechism Study</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Libre+Caslon+Text:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/app.css"><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" defer></script><script src="app.js" defer></script>
 </head>
-<body>
-  <div class="app-container">
-    <!-- Sidebar Navigation -->
-    <aside class="sidebar">
-      <h2>Memorize Creeds</h2>
-      <nav>
-        <ul>
-          <li><a href="#" class="nav-btn active" data-target="library-view">Library & Selection</a></li>
-          <li><a href="#" class="nav-btn" data-target="session-config-view">Pool & Mode Setup</a></li>
-          <li><a href="#" class="nav-btn" data-target="active-session-view">Active Session</a></li>
-          <li><a href="#" class="nav-btn" data-target="analytics-view">Analytics & Progress</a></li>
-          <li><a href="#" class="nav-btn" data-target="storage-view">Data & Storage</a></li>
-        </ul>
-      </nav>
-    </aside>
-
-    <!-- Main Content Area -->
-    <main class="main-content">
-
-      <!-- VIEW 1: Library Selection -->
-      <section id="library-view" class="view-panel active">
-        <header>
-          <h1>Document Library</h1>
-          <p>Select questions, chapters, or sections to build your target list.</p>
-        </header>
-
-        <div class="document-selector">
-          <label for="doc-dropdown">Choose Document:</label>
-          <select id="doc-dropdown">
-            <option value="wsc">Westminster Shorter Catechism</option>
-            <option value="wlc">Westminster Larger Catechism</option>
-            <option value="heidelberg">Heidelberg Catechism</option>
-          </select>
-        </div>
-
-        <div class="selection-controls">
-          <button id="btn-select-all">Select All</button>
-          <button id="btn-deselect-all">Deselect All</button>
-          <button id="btn-select-unlearned">Select Unlearned</button>
-          <button id="btn-select-revisit">Select Revisit</button>
-        </div>
-
-        <div class="item-tree-list" id="item-tree">
-          <!-- Dynamically generated list of items -->
-          <div class="tree-item">
-            <input type="checkbox" id="item-1" checked>
-            <label for="item-1">Q1. What is the chief end of man?</label>
-            <span class="badge badge-revisit">Revisit</span>
-          </div>
-          <div class="tree-item">
-            <input type="checkbox" id="item-2">
-            <label for="item-2">Q2. What rule hath God given to direct us how we may glorify and enjoy him?</label>
-            <span class="badge badge-unlearned">Unlearned</span>
-          </div>
-        </div>
-      </section>
-
-      <!-- VIEW 2: Session Setup & Configuration -->
-      <section id="session-config-view" class="view-panel">
-        <header>
-          <h1>Configure Session</h1>
-        </header>
-
-        <div class="config-grid">
-          <div class="config-card">
-            <h3>1. Primary Mode</h3>
-            <label><input type="radio" name="app-mode" value="flashcard" checked> Flashcard Mode</label>
-            <label><input type="radio" name="app-mode" value="test"> Verbatim Test Mode</label>
-          </div>
-
-          <div class="config-card" id="test-difficulty-card">
-            <h3>2. Test Difficulty (Verbatim Mode Only)</h3>
-            <label><input type="radio" name="difficulty" value="easy"> Easy (Fill in the blanks)</label>
-            <label><input type="radio" name="difficulty" value="medium" checked> Medium (Word Bank / Drag & Drop)</label>
-            <label><input type="radio" name="difficulty" value="hard"> Hard (Full Typing)</label>
-          </div>
-
-          <div class="config-card">
-            <h3>3. Order & Pool Sorting</h3>
-            <label><input type="radio" name="order" value="sequential" checked> Sequential Order</label>
-            <label><input type="radio" name="order" value="random"> Randomized / Shuffle</label>
-          </div>
-        </div>
-
-        <button class="btn-primary" id="btn-start-session">Start Practice Session</button>
-      </section>
-
-      <!-- VIEW 3: Active Session (Flashcard / Test) -->
-      <section id="active-session-view" class="view-panel">
-        <div class="session-progress-bar">
-          <div class="progress-fill" style="width: 30%;"></div>
-        </div>
-        <div class="session-header">
-          <span id="session-counter">Question 3 of 10</span>
-          <button id="btn-exit-session" class="btn-secondary">Exit Session</button>
-        </div>
-
-        <!-- Flashcard View Container -->
-        <div id="flashcard-container" class="card-workspace">
-          <div class="flashcard">
-            <div class="card-prompt">Q3. What do the Scriptures principally teach?</div>
-            <div class="card-content hidden" id="card-answer">
-              The Scriptures principally teach what man is to believe concerning God, and what duty God requires of man.
-            </div>
-          </div>
-          <button id="btn-reveal-card" class="btn-primary">Reveal Answer</button>
-
-          <div class="flashcard-actions hidden" id="flashcard-status-btns">
-            <button class="status-btn btn-unlearned" data-status="unlearned">Unlearned</button>
-            <button class="status-btn btn-revisit" data-status="revisit">Revisit</button>
-            <button class="status-btn btn-learned" data-status="learned">Learned</button>
-          </div>
-        </div>
-
-        <!-- Test View Container -->
-        <div id="test-container" class="card-workspace hidden">
-          <div class="test-prompt">Q3. What do the Scriptures principally teach?</div>
-          
-          <!-- Easy Mode: Fill in blanks -->
-          <div id="mode-easy" class="test-interface hidden">
-            <p>The Scriptures <input type="text" data-answer="principally"> teach what man is to <input type="text" data-answer="believe"> concerning God...</p>
-          </div>
-
-          <!-- Medium Mode: Word Bank -->
-          <div id="mode-medium" class="test-interface">
-            <div class="answer-dropzone" id="dropzone"></div>
-            <div class="word-bank" id="word-bank">
-              <span class="word-chip">principally</span>
-              <span class="word-chip">Scriptures</span>
-              <span class="word-chip">believe</span>
-              <span class="word-chip">duty</span>
-            </div>
-          </div>
-
-          <!-- Hard Mode: Full Input -->
-          <div id="mode-hard" class="test-interface hidden">
-            <textarea placeholder="Type out the exact answer here..."></textarea>
-          </div>
-
-          <button id="btn-submit-test" class="btn-primary">Check Answer</button>
-        </div>
-      </section>
-
-      <!-- VIEW 4: Analytics & Progress -->
-      <section id="analytics-view" class="view-panel">
-        <header>
-          <h1>Progress & Analytics</h1>
-        </header>
-
-        <div class="analytics-grid">
-          <div class="chart-card">
-            <h3>Mastery Status Breakdown</h3>
-            <canvas id="masteryPieChart"></canvas>
-          </div>
-          <div class="chart-card">
-            <h3>Memorization Trend Over Time</h3>
-            <canvas id="trendLineChart"></canvas>
-          </div>
-        </div>
-      </section>
-
-      <!-- VIEW 5: Data & Storage Management -->
-      <section id="storage-view" class="view-panel">
-        <header>
-          <h1>Data & Storage Settings</h1>
-        </header>
-
-        <div class="storage-card">
-          <h3>File System Access API</h3>
-          <p>Connect a local folder to sync JSON files directly to disk.</p>
-          <button id="btn-select-dir" class="btn-primary">Connect Local Directory</button>
-          <p id="directory-status">Status: Using IndexedDB (Internal Storage)</p>
-        </div>
-
-        <div class="storage-card">
-          <h3>Import / Export User Progress</h3>
-          <button id="btn-export-json" class="btn-secondary">Export Backup (JSON)</button>
-          <input type="file" id="import-json-file" style="display:none;" accept=".json">
-          <button id="btn-import-json" class="btn-secondary">Import Backup (JSON)</button>
-        </div>
-      </section>
-
-    </main>
-  </div>
-</body>
-</html>
+<body><div class="app-shell">
+  <aside class="sidebar" aria-label="Primary navigation">
+    <a class="brand" href="#library" data-route="library"><span class="brand-mark">C</span><span><strong>Confessio</strong><small>Catechism study</small></span></a>
+    <nav class="main-nav"><a class="nav-link active" href="#library" data-route="library"><span>01</span> Library</a><a class="nav-link" href="#practice" data-route="practice"><span>02</span> Practice</a><a class="nav-link" href="#progress" data-route="progress"><span>03</span> Progress</a><a class="nav-link" href="#data" data-route="data"><span>04</span> Data</a></nav>
+    <div class="sidebar-foot"><p>Saved on this device</p><span class="save-state"><i></i><span id="save-label">Ready</span></span></div>
+  </aside>
+  <header class="mobile-header"><a class="brand" href="#library" data-route="library"><span class="brand-mark">C</span><strong>Confessio</strong></a><button id="menu-toggle" class="icon-button" aria-label="Open navigation" aria-expanded="false">Menu</button></header>
+  <main>
+    <section id="library-view" class="view active" aria-labelledby="library-title">
+      <div class="page-header"><div><p class="eyebrow">Your library</p><h1 id="library-title">Choose what to learn.</h1><p>Build a focused set from the Westminster Shorter Catechism.</p></div><button id="practice-selection" class="button primary">Practice selection →</button></div>
+      <div class="summary-strip"><div><strong id="total-count">107</strong><span>Total questions</span></div><div><strong id="learned-count">0</strong><span>Learned</span></div><div><strong id="revisit-count">0</strong><span>To revisit</span></div><div><strong id="selected-count">0</strong><span>Selected</span></div></div>
+      <article class="document-card"><div class="document-spine">WSC</div><div class="document-copy"><p class="eyebrow">Catechism · 1646</p><h2>Westminster Shorter Catechism</h2><p>With PCA proof texts · 107 questions</p></div><div class="document-progress"><span><strong id="document-percent">0%</strong> mastered</span><div class="progress-track"><i id="document-progress-fill"></i></div></div></article>
+      <div class="library-toolbar"><label class="search-field"><span class="sr-only">Search questions</span><input id="question-search" type="search" placeholder="Search questions or answers…"></label><select id="status-filter" aria-label="Filter by learning status"><option value="all">All statuses</option><option value="unlearned">Not started</option><option value="revisit">Revisit</option><option value="learned">Learned</option></select><div class="selection-menu"><button id="select-visible" class="button quiet">Select visible</button><button id="clear-selection" class="button quiet">Clear</button></div></div>
+      <div class="question-list-header"><label><input id="select-all-checkbox" type="checkbox"> <span>Question</span></label><span>Status</span></div><div id="question-list" class="question-list" aria-live="polite"></div>
+    </section>
+    <section id="practice-view" class="view" aria-labelledby="practice-title">
+      <div id="practice-setup"><div class="page-header compact"><div><p class="eyebrow">Build a session</p><h1 id="practice-title">How would you like to practice?</h1><p>Choose a pool, a method, and an order.</p></div></div>
+        <div class="setup-section"><div class="section-number">1</div><div><h2>Choose your pool</h2><p>Use your current selection or study by learning status.</p></div></div>
+        <div class="choice-grid four"><label class="choice-card selected"><input type="radio" name="pool" value="selected" checked><strong>Selected</strong><span id="selected-pool-label">0 questions</span></label><label class="choice-card"><input type="radio" name="pool" value="unlearned"><strong>Not started</strong><span id="unlearned-pool-label">107 questions</span></label><label class="choice-card"><input type="radio" name="pool" value="revisit"><strong>Revisit</strong><span id="revisit-pool-label">0 questions</span></label><label class="choice-card"><input type="radio" name="pool" value="all"><strong>All questions</strong><span>Full catechism</span></label></div>
+        <div class="setup-section"><div class="section-number">2</div><div><h2>Choose a method</h2><p>Review freely or test your recall word for word.</p></div></div>
+        <div class="choice-grid"><label class="choice-card selected feature"><input type="radio" name="method" value="flashcard" checked><span class="choice-icon">Aa</span><strong>Flashcards</strong><span>Reveal the answer, then rate your recall.</span></label><label class="choice-card feature"><input type="radio" name="method" value="easy"><span class="choice-icon">_ _</span><strong>Fill the blanks</strong><span>Complete selected words in the answer.</span></label><label class="choice-card feature"><input type="radio" name="method" value="medium"><span class="choice-icon">A B</span><strong>Word builder</strong><span>Place every word in the correct order.</span></label><label class="choice-card feature"><input type="radio" name="method" value="hard"><span class="choice-icon">¶</span><strong>Type verbatim</strong><span>Recall and type the complete answer.</span></label></div>
+        <div class="setup-footer"><label class="toggle-row"><input id="shuffle-order" type="checkbox"><span class="toggle"></span><span><strong>Shuffle questions</strong><small>Otherwise shown in catechism order</small></span></label><button id="start-session" class="button primary large">Begin session →</button></div>
+      </div>
+      <div id="session-view" class="session hidden"><div class="session-top"><button id="exit-session" class="button quiet">← End session</button><span id="session-counter">1 of 10</span><span id="session-score">0 correct</span></div><div class="session-progress"><i id="session-progress-fill"></i></div><article class="study-card"><p class="eyebrow" id="question-number">Question 1</p><h2 id="session-question"></h2><div id="answer-area" class="answer-area"></div><div id="feedback" class="feedback hidden" role="status"></div></article><div id="session-actions" class="session-actions"></div></div>
+    </section>
+    <section id="progress-view" class="view" aria-labelledby="progress-title"><div class="page-header"><div><p class="eyebrow">Learning record</p><h1 id="progress-title">Progress, made visible.</h1><p>Every review adds to the story of what you are learning.</p></div></div><div class="summary-strip progress-summary"><div><strong id="analytics-mastered">0</strong><span>Mastered</span></div><div><strong id="analytics-reviewed">0</strong><span>Total reviews</span></div><div><strong id="analytics-accuracy">—</strong><span>Test accuracy</span></div><div><strong id="analytics-streak">0</strong><span>Day streak</span></div></div><div class="analytics-grid"><article class="chart-card"><div class="card-heading"><p class="eyebrow">Current state</p><h2>Mastery breakdown</h2></div><div class="donut-wrap"><canvas id="mastery-chart"></canvas><div class="donut-center"><strong id="donut-percent">0%</strong><span>learned</span></div></div><div id="mastery-legend" class="legend"></div></article><article class="chart-card wide"><div class="card-heading"><p class="eyebrow">Last 14 days</p><h2>Practice activity</h2></div><div class="line-chart-wrap"><canvas id="activity-chart"></canvas></div></article></div><article class="milestone-card"><div><p class="eyebrow">Next milestone</p><h2 id="milestone-title">Learn your first 10 questions</h2><p id="milestone-copy">10 questions to go. Small, steady steps make durable memories.</p></div><div class="milestone-ring"><strong id="milestone-value">0</strong><span>/ 10</span></div></article></section>
+    <section id="data-view" class="view" aria-labelledby="data-title"><div class="page-header"><div><p class="eyebrow">Your information</p><h1 id="data-title">Private by design.</h1><p>Your selections and progress stay in this browser unless you export them.</p></div></div><div class="data-grid"><article class="data-card"><span class="data-icon">↓</span><h2>Export a backup</h2><p>Download all learning status and review history as a portable JSON file.</p><button id="export-data" class="button primary">Download backup</button></article><article class="data-card"><span class="data-icon">↑</span><h2>Restore a backup</h2><p>Import a Confessio backup from another browser or device.</p><input id="import-file" type="file" accept="application/json,.json" class="sr-only"><button id="import-data" class="button secondary">Choose backup</button></article><article class="data-card"><span class="data-icon">⌂</span><h2>Connect a folder</h2><p>Choose a local folder for manual backup access in supported browsers.</p><button id="connect-folder" class="button secondary">Choose folder</button><small id="folder-status">No folder connected</small></article></div><div class="danger-zone"><div><h2>Reset learning data</h2><p>Erase statuses, selections, and review history on this device.</p></div><button id="reset-data" class="button danger">Reset progress</button></div></section>
+  </main>
+</div><div id="toast" class="toast" role="status" aria-live="polite"></div></body></html>
