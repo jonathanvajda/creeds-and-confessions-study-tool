@@ -1,6 +1,6 @@
 # Confessio
 
-A local-first study tool for memorizing historic creeds and catechisms. The first draft includes the Westminster Shorter Catechism with PCA proof texts, selectable study pools, four practice modes, progress analytics, and JSON backup/restore.
+A local-first study tool for memorizing historic creeds and catechisms. The app includes the Westminster Shorter and Larger Catechisms, selectable study pools, four practice modes, progress analytics, and JSON backup/restore.
 
 ## Run locally
 

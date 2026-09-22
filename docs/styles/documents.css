@@ -1,0 +1,34 @@
+.document-switcher {
+  display: flex;
+  gap: 8px;
+  margin: -12px 0 20px;
+}
+
+.document-option {
+  display: grid;
+  grid-template-columns: auto auto;
+  column-gap: 10px;
+  align-items: center;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--panel);
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+}
+
+.document-option > span {
+  grid-row: 1 / 3;
+  color: var(--green);
+  font: 700 12px "Libre Caslon Text", serif;
+}
+
+.document-option strong { font-size: 12px; }
+.document-option small { color: var(--muted); font-size: 9px; }
+.document-option.active { background: var(--sage); border-color: #9db5a4; }
+
+@media (max-width: 620px) {
+  .document-switcher { display: grid; grid-template-columns: 1fr 1fr; }
+  .document-option { padding: 9px; }
+}
