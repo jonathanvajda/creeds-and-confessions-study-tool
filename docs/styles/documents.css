@@ -29,6 +29,7 @@
 .document-option strong { font-size: 12px; }
 .document-option small { color: var(--muted); font-size: 9px; }
 .document-option.active { background: var(--sage); border-color: #9db5a4; }
+.data-grid { grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
 
 /* Keep off-canvas navigation and intrinsic grid widths from widening mobile pages. */
 html,
