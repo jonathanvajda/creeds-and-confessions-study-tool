@@ -1,5 +1,6 @@
 .document-switcher {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   margin: -12px 0 20px;
 }
@@ -16,6 +17,7 @@
   color: var(--ink);
   text-align: left;
   cursor: pointer;
+  flex: 1 1 190px;
 }
 
 .document-option > span {
@@ -28,7 +30,58 @@
 .document-option small { color: var(--muted); font-size: 9px; }
 .document-option.active { background: var(--sage); border-color: #9db5a4; }
 
+/* Keep off-canvas navigation and intrinsic grid widths from widening mobile pages. */
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+.app-shell,
+main,
+.view,
+.page-header,
+.document-card,
+.library-toolbar,
+.question-list,
+.question-row,
+.choice-grid,
+.analytics-grid,
+.data-grid {
+  min-width: 0;
+}
+
 @media (max-width: 620px) {
+  .app-shell,
+  .mobile-header,
+  main {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .sidebar {
+    width: min(238px, calc(100% - 48px));
+    visibility: hidden;
+  }
+
+  .sidebar.open { visibility: visible; }
+
   .document-switcher { display: grid; grid-template-columns: 1fr 1fr; }
-  .document-option { padding: 9px; }
+  .document-option { min-width: 0; padding: 9px; }
+  .document-option strong,
+  .document-option small { min-width: 0; overflow-wrap: anywhere; }
+
+  .document-copy,
+  .document-progress,
+  .question-row .question,
+  .selection-menu { min-width: 0; }
+
+  .document-copy h2,
+  .document-copy p,
+  .question-row .question { overflow-wrap: anywhere; }
+
+  .library-toolbar > * { max-width: 100%; }
+  .selection-menu { flex-wrap: wrap; }
+  .answer-preview { max-width: 100%; }
 }

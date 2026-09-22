@@ -1,11 +1,15 @@
 const DOCUMENTS = {
   wsc: { id: 'wsc', url: 'data/westminster-shorter-catechism_pca.json', abbreviation: 'WSC', title: 'Westminster Shorter Catechism', year: '1646', detail: 'With PCA proof texts' },
-  wlc: { id: 'wlc', url: 'data/westminster_larger_catechism.json', abbreviation: 'WLC', title: 'Westminster Larger Catechism', year: '1647', detail: 'Westminster Assembly edition' }
+  wlc: { id: 'wlc', url: 'data/westminster_larger_catechism.json', abbreviation: 'WLC', title: 'Westminster Larger Catechism', year: '1647', detail: 'Westminster Assembly edition' },
+  heidelberg: { id: 'heidelberg', url: 'data/heidelberg_catechism.json', abbreviation: 'HC', title: 'Heidelberg Catechism', year: '1563', detail: 'Zacharias Ursinus' },
+  baptist1695: { id: 'baptist1695', url: 'data/1695_baptist_catechism.json', abbreviation: 'BC', title: '1695 Baptist Catechism', year: '1695', detail: 'William Collins' },
+  keach: { id: 'keach', url: 'data/keachs_catechism.json', abbreviation: 'KC', title: "Keach's Catechism", year: '1794', detail: 'Baptist Catechism' },
+  children: { id: 'children', url: 'data/catechism_for_young_children.json', abbreviation: 'CYC', title: 'Catechism for Young Children', year: '1840', detail: 'Joseph Engles' }
 };
 const DB_NAME = 'confessio-study';
 const state = { documents: {}, activeDocument: 'wsc', questions: [], progress: {}, selected: new Set(), history: [], session: null, charts: [] };
 const $ = (id) => document.getElementById(id);
-const cleanAnswer = (text) => text.replace(/\s*\[[a-z]+\]/gi, '').replace(/\s+([,.;:?!])/g, '$1').trim();
+const cleanAnswer = (text = '') => text.replace(/\s*\[[a-z0-9]+\]/gi, '').replace(/\s+([,.;:?!])/g, '$1').trim();
 const normalize = (text) => cleanAnswer(text).toLowerCase().replace(/[^a-z0-9'\s]/g, '').replace(/\s+/g, ' ').trim();
 const shuffle = (items) => { const a = [...items]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 
@@ -134,9 +138,15 @@ async function connectFolder() { if (!window.showDirectoryPicker) { showToast('F
 async function init() {
   try {
     const load = url => fetch(url).then(r => { if (!r.ok) throw new Error('data'); return r.json(); });
-    const [shorter, larger, saved] = await Promise.all([load(DOCUMENTS.wsc.url), load(DOCUMENTS.wlc.url), dbGet('userData')]);
-    state.documents.wsc = shorter.questions.map(q => ({ ...q, documentId: 'wsc' }));
-    state.documents.wlc = larger.Data.map(q => ({ number: q.Number, question: q.Question, answer: q.Answer, verses: q.Proofs, documentId: 'wlc' }));
+    const entries = Object.entries(DOCUMENTS);
+    const loaded = await Promise.all(entries.map(([, document]) => load(document.url)));
+    const saved = await dbGet('userData');
+    entries.forEach(([id], index) => {
+      const source = loaded[index];
+      state.documents[id] = source.questions
+        ? source.questions.map(q => ({ ...q, documentId: id }))
+        : source.Data.map(q => ({ number: q.Number, question: q.Question, answer: q.Answer || cleanAnswer(q.AnswerWithProofs), verses: q.Proofs || [], documentId: id }));
+    });
     state.questions = state.documents.wsc;
     if (saved) applySavedData(saved);
     renderLibrary();
